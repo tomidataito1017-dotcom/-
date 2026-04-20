@@ -1,0 +1,15 @@
+{
+  "name": "news-line-notify",
+  "version": "1.0.0",
+  "description": "RSSニュースをClaudeで要約してLINE Notifyに送信するスクリプト",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "dotenv": "^16.4.5",
+    "rss-parser": "^3.13.0"
+  }
+}
