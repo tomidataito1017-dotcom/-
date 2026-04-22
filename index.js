@@ -7,6 +7,10 @@ const parser = new Parser();
 const FEEDS = [
   { label: '国内ニュース', url: 'https://www.nhk.or.jp/rss/news/cat0.xml' },
   { label: '経済', url: 'https://www.nhk.or.jp/rss/news/cat4.xml' },
+  { label: '株式・マーケット', url: 'https://feeds.jp.reuters.com/reuters/JPbusiness' },
+  { label: '不動産', url: 'https://www.re-port.net/rss/news.rdf' },
+  { label: 'スポーツ', url: 'https://www.nhk.or.jp/rss/news/cat6.xml' },
+  { label: 'AI・テクノロジー', url: 'https://rss.itmedia.co.jp/rss/2.0/aiplus.xml' },
 ];
 
 async function fetchNews() {
@@ -15,7 +19,7 @@ async function fetchNews() {
     try {
       const result = await parser.parseURL(feed.url);
       message += `■ ${feed.label}\n`;
-      result.items.slice(0, 3).forEach(item => {
+      result.items.slice(0, 2).forEach(item => {
         message += `・${item.title}\n${item.link}\n`;
       });
       message += '\n';
@@ -29,8 +33,7 @@ async function fetchNews() {
 async function sendLine(text) {
   const userId = process.env.LINE_USER_ID;
   const token = process.env.LINE_CHANNEL_ACCESS_TOKEN;
-  console.log('USER_ID:', userId ? userId.substring(0, 5) + '...' : 'undefined');
-  
+
   const response = await axios.post(
     'https://api.line.me/v2/bot/message/push',
     { to: userId, messages: [{ type: 'text', text }] },
