@@ -14,19 +14,33 @@ const FEEDS = [
 ];
 
 async function fetchNews() {
-  let message = '【今日のニュース】\n\n';
+  const allItems = [];
+
   for (const feed of FEEDS) {
     try {
       const result = await parser.parseURL(feed.url);
-      message += `■ ${feed.label}\n`;
-      result.items.slice(0, 2).forEach(item => {
-        message += `・${item.title}\n${item.link}\n`;
+      result.items.slice(0, 5).forEach(item => {
+        allItems.push({
+          label: feed.label,
+          title: item.title,
+          link: item.link,
+          date: item.pubDate ? new Date(item.pubDate) : new Date(0),
+        });
       });
-      message += '\n';
     } catch (e) {
       console.log(`スキップ: ${feed.label}`);
     }
   }
+
+  // 新しい順（注目度＝新しさ）に並べて上位15件
+  allItems.sort((a, b) => b.date - a.date);
+  const top15 = allItems.slice(0, 15);
+
+  let message = '【今日の注目ニュース TOP15】\n\n';
+  top15.forEach((item, i) => {
+    message += `${i + 1}. [${item.label}]\n${item.title}\n${item.link}\n\n`;
+  });
+
   return message;
 }
 
@@ -34,7 +48,7 @@ async function sendLine(text) {
   const userId = process.env.LINE_USER_ID;
   const token = process.env.LINE_CHANNEL_ACCESS_TOKEN;
 
-  const response = await axios.post(
+  await axios.post(
     'https://api.line.me/v2/bot/message/push',
     { to: userId, messages: [{ type: 'text', text }] },
     { headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' } }
