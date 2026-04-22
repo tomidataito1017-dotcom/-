@@ -27,10 +27,14 @@ async function fetchNews() {
 }
 
 async function sendLine(text) {
-  await axios.post(
+  const userId = process.env.LINE_USER_ID;
+  const token = process.env.LINE_CHANNEL_ACCESS_TOKEN;
+  console.log('USER_ID:', userId ? userId.substring(0, 5) + '...' : 'undefined');
+  
+  const response = await axios.post(
     'https://api.line.me/v2/bot/message/push',
-    { to: process.env.LINE_USER_ID, messages: [{ type: 'text', text }] },
-    { headers: { 'Authorization': `Bearer ${process.env.LINE_CHANNEL_ACCESS_TOKEN}`, 'Content-Type': 'application/json' } }
+    { to: userId, messages: [{ type: 'text', text }] },
+    { headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' } }
   );
   console.log('送信成功！');
 }
